@@ -1,7 +1,6 @@
 package entities;
 
 import com.sun.istack.internal.NotNull;
-import org.eclipse.persistence.internal.oxm.schema.model.All;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -46,7 +45,7 @@ public class Club implements Serializable{
 
     public void addPlayer(Player player){
         players.add(player);
-        player.setClub(this);
+        if (player.getClub()!=this) player.setClub(this);
     }
 
     public Integer getId() {

@@ -78,5 +78,6 @@ public class Player  implements Serializable {
 
     public void setClub(Club club) {
         this.club = club;
+        club.addPlayer(this);
     }
 }
