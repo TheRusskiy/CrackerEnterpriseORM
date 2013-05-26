@@ -44,6 +44,11 @@ public class Club implements Serializable{
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "club", fetch = FetchType.EAGER)
     private Set<Player> players = new HashSet<Player>();
 
+    public void addPlayer(Player player){
+        players.add(player);
+        player.setClub(this);
+    }
+
     public Integer getId() {
         return id;
     }

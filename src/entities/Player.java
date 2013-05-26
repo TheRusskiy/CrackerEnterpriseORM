@@ -71,4 +71,12 @@ public class Player  implements Serializable {
     public void setPosition(String position) {
         this.position = position;
     }
+
+    public Club getClub() {
+        return club;
+    }
+
+    public void setClub(Club club) {
+        this.club = club;
+    }
 }

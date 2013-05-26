@@ -1,6 +1,7 @@
 package web;
 
 import beans.Dao;
+import entities.Club;
 import entities.Player;
 
 import javax.ejb.EJB;
@@ -32,11 +33,12 @@ public class FootballServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         loadResources();
         Player player = dao.createPlayer("DIMA");
-        player.setName("SADASD");
-        dao.save(player);
+        Club club = dao.createClub("MU");
+        club.addPlayer(player);
+        dao.save(club);
         player = dao.getPlayer(player.getId());
         ServletOutputStream out = response.getOutputStream();
-        out.print(player.getId()+":"+player.getName());
+        out.print(player.getId()+":"+player.getName()+", club: "+player.getClub().getName());
     }
 
     private void loadResources(){
