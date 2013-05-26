@@ -5,6 +5,7 @@ import beans.Dao;
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +20,7 @@ import java.io.IOException;
  */
 @WebServlet(name = "web.FootballServlet")
 public class FootballServlet extends HttpServlet {
+    final private String errorPageURL = "/errors/error_java.jsp";
     @EJB(name = "football_bean")
     Dao dao;
 
@@ -28,49 +30,66 @@ public class FootballServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        loadResources();
-        Action action = getAction(request);
-        switch (action) {
-            case ALL_PLAYERS:{
-                break;
+
+
+        try {
+            loadResources();
+            Action action = getAction(request);
+            switch (action) {
+                case ALL_PLAYERS:{
+                    allPlayers(request, response);
+                    break;
+                }
+                case SHOW_PLAYER:{
+                    showPlayer(request, response);
+                    break;
+                }
+                case EDIT_PLAYER:{
+                    editPlayer(request, response);
+                    break;
+                }
+                case NEW_PLAYER:{
+                    newPlayer(request, response);
+                    break;
+                }
+                case ALL_MATCHES:{
+                    allMatches(request, response);
+                    break;
+                }
+                case SHOW_MATCH:{
+                    showMatch(request, response);
+                    break;
+                }
+                case EDIT_MATCH:{
+                    editMatch(request, response);
+                    break;
+                }
+                case NEW_MATCH:{
+                    newMatch(request, response);
+                    break;
+                }
+                case ALL_CLUBS:{
+                    allClubs(request, response);
+                    break;
+                }
+                case SHOW_CLUB:{
+                    showClub(request, response);
+                    break;
+                }
+                case EDIT_CLUB:{
+                    editClub(request, response);
+                    break;
+                }
+                case NEW_CLUB:{
+                    newClub(request, response);
+                    break;
+                }
+                default:{
+                    throw new RuntimeException("WTF?");
+                }
             }
-            case SHOW_PLAYER:{
-                break;
-            }
-            case EDIT_PLAYER:{
-                break;
-            }
-            case NEW_PLAYER:{
-                break;
-            }
-            case ALL_MATCHES:{
-                break;
-            }
-            case SHOW_MATCH:{
-                break;
-            }
-            case EDIT_MATCH:{
-                break;
-            }
-            case NEW_MATCH:{
-                break;
-            }
-            case ALL_CLUBS:{
-                break;
-            }
-            case SHOW_CLUB:{
-                break;
-            }
-            case EDIT_CLUB:{
-                break;
-            }
-            case NEW_CLUB:{
-                break;
-            }
-            default:{
-                throw new RuntimeException("WTF?");
-            }
-        }
+            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(action.responseURI);
+            dispatcher.forward(request, response);
 //        Player player = dao.createPlayer("DIMA");
 //        Club club = dao.createClub("MU");
 //        club.addPlayer(player);
@@ -78,51 +97,55 @@ public class FootballServlet extends HttpServlet {
 //        player = dao.getPlayer(player.getId());
 //        ServletOutputStream out = response.getOutputStream();
 //        out.print(player.getId()+":"+player.getName()+", club: "+player.getClub().getName());
+        } catch (Throwable e) {
+            sendErrorRedirect(request, response, errorPageURL, e);
+        }
     }
 
+    private void allPlayers(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void showPlayer(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void editPlayer(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void newPlayer(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void allMatches(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void showMatch(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void editMatch(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void newMatch(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void allClubs(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void showClub(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void editClub(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void newClub(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+
+
     private Action getAction(HttpServletRequest request) {
-        Action action = null;
         String path = request.getRequestURI().toLowerCase();
-        if (path.matches("/?players/?$")){
-            action = Action.ALL_PLAYERS;
+        for(Action action:Action.values()){
+            if (path.matches(action.requestURI)) return action;
         }
-        else if (path.matches("/?players/new/?$")){
-            action = Action.NEW_PLAYER;
-        }
-        else if (path.matches("/?players/show/?$")){
-            action = Action.SHOW_PLAYER;
-        }
-        else if (path.matches("/?players/edit/?$")){
-            action = Action.EDIT_PLAYER;
-        }
-        else if (path.matches("/?matches/?$")){
-            action = Action.ALL_MATCHES;
-        }
-        else if (path.matches("/?matches/new/?$")){
-            action = Action.NEW_MATCH;
-        }
-        else if (path.matches("/?matches/show/?$")){
-            action = Action.SHOW_MATCH;
-        }
-        else if (path.matches("/?matches/edit/?$")){
-            action = Action.EDIT_MATCH;
-        }
-        else if (path.matches("/?clubs/?$")){
-            action = Action.ALL_CLUBS;
-        }
-        else if (path.matches("/?clubs/new/?$")){
-            action = Action.NEW_CLUB;
-        }
-        else if (path.matches("/?clubs/show/?$")){
-            action = Action.SHOW_CLUB;
-        }
-        else if (path.matches("/?clubs/edit/?$")){
-            action = Action.EDIT_CLUB;
-        }
-        else {
-            throw new RuntimeException("Unknown route: "+request.getServletPath());
-        }
-        return action;
+        throw new RuntimeException("Unknown route: "+request.getServletPath());
     }
 
     private void loadResources(){
@@ -135,8 +158,31 @@ public class FootballServlet extends HttpServlet {
         }
     }
     enum Action {
-        ALL_PLAYERS, SHOW_PLAYER, EDIT_PLAYER, NEW_PLAYER,
-        ALL_MATCHES, SHOW_MATCH, EDIT_MATCH, NEW_MATCH,
-        ALL_CLUBS, SHOW_CLUB, EDIT_CLUB, NEW_CLUB
+        ALL_PLAYERS("/?players/?$", "/index.jsp"),
+        SHOW_PLAYER("/?players/show/?$", ""),
+        EDIT_PLAYER("/?players/edit/?$", ""),
+        NEW_PLAYER("/?players/new/?$", ""),
+        ALL_MATCHES("/?matches/?$", ""),
+        SHOW_MATCH("/?matches/show/?$", ""),
+        EDIT_MATCH("/?matches/edit/?$", ""),
+        NEW_MATCH("/?matches/new/?$", ""),
+        ALL_CLUBS("/?clubs/?$", ""),
+        SHOW_CLUB("/?clubs/show/?$", ""),
+        EDIT_CLUB("/?clubs/edit/?$", ""),
+        NEW_CLUB("/?clubs/new/?$", "");
+        final public String requestURI;
+        final public String responseURI;
+        Action(String requestURI, String responseURI){
+            this.requestURI = requestURI;
+            this.responseURI = responseURI;
+        }
+    }
+    protected void sendErrorRedirect(HttpServletRequest request, HttpServletResponse response, String errorPageURL, Throwable e) {
+        try {
+            request.setAttribute ("javax.servlet.jsp.jspException", e);
+            getServletConfig().getServletContext().getRequestDispatcher(errorPageURL).forward(request, response);
+        } catch (Exception exceptional_exception) {
+            throw new RuntimeException(exceptional_exception);
+        }
     }
 }

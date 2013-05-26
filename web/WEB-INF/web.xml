@@ -32,5 +32,14 @@
         <servlet-name>FootballServlet</servlet-name>
         <url-pattern>/clubs/*</url-pattern>
     </servlet-mapping>
+    <!--ERROR PAGES-->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/errors/error_404.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/errors/error_java.jsp</location>
+    </error-page>
 
 </web-app>
