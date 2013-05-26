@@ -12,5 +12,25 @@
         <servlet-name>FootballServlet</servlet-name>
         <url-pattern>/players</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FootballServlet</servlet-name>
+        <url-pattern>/players/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FootballServlet</servlet-name>
+        <url-pattern>/matches</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FootballServlet</servlet-name>
+        <url-pattern>/matches/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FootballServlet</servlet-name>
+        <url-pattern>/clubs</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FootballServlet</servlet-name>
+        <url-pattern>/clubs/*</url-pattern>
+    </servlet-mapping>
 
 </web-app>
