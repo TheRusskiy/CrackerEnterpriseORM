@@ -7,7 +7,18 @@ import entities.Player;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.sql.Date;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Author: TheRusskiy
@@ -25,6 +36,15 @@ public class DaoSessionBean implements Dao{
     }
 
     @Override
+    public Collection<Player> getPlayers() {
+        Query query = em.createQuery("select p from Player p");
+        List list = query.getResultList();
+        int i=0;
+        return null;
+    }
+
+
+    @Override
     public Player createPlayer(String name) {
         Player player = new Player(name);
         em.persist(player);
@@ -35,6 +55,11 @@ public class DaoSessionBean implements Dao{
     @Override
     public Match getMatch(Integer id) {
         return em.find(Match.class, id);
+    }
+
+    @Override
+    public Collection<Match> getMatches() {
+        return null;
     }
 
     @Override
@@ -59,6 +84,11 @@ public class DaoSessionBean implements Dao{
     }
 
     @Override
+    public Collection<Club> getClubs() {
+        return null;
+    }
+
+    @Override
     public Club createClub(String name) {
         Club club = new Club(name);
         em.persist(club);
@@ -80,6 +110,76 @@ public class DaoSessionBean implements Dao{
     @Override
     public void save(Club club) {
         em.merge(club);
+    }
+
+    @Override
+    public String marshal(Object object){
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            // output pretty printed
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            StringWriter sw = new StringWriter();
+            jaxbMarshaller.marshal(object, sw);
+            return sw.toString();
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void marshal(Object object, OutputStream out){
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            // output pretty printed
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            jaxbMarshaller.marshal(object, out);
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> T unmarshal(String xml, Class c){
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(c);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            T obj = (T) jaxbUnmarshaller.unmarshal(new StringReader(xml));
+            restoreEntity(obj);
+            return obj;
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public <T> T unmarshal(InputStream in, Class c){
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(c);
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            T obj = (T) jaxbUnmarshaller.unmarshal(in);
+            restoreEntity(obj);
+            return obj;
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void restoreEntity(Object obj) {
+        if (obj.getClass()==Player.class){
+            Player p = (Player) obj;
+            p.setClub(getClub(p.getClubID()));
+        } else if (obj.getClass()==Match.class){
+            Match p = (Match) obj;
+            p.setGuest(getClub(p.getGuestID()));
+            p.setHome(getClub(p.getHomeID()));
+        }  else if (obj.getClass()==Club.class){
+            Club p = (Club) obj;
+            for(Integer id: p.getPlayerIDs()){
+                p.addPlayer(getPlayer(id));
+            }
+        } else {
+            return;
+        }
+        em.persist(obj);
+        em.flush();
     }
 
 

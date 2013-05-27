@@ -25,13 +25,10 @@ public class FootballServlet extends HttpServlet {
     Dao dao;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        loadResources();
-
+        doGet(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-
         try {
             loadResources();
             Action action = getAction(request);
@@ -103,7 +100,7 @@ public class FootballServlet extends HttpServlet {
     }
 
     private void allPlayers(HttpServletRequest request, HttpServletResponse response) {
-
+        dao.getPlayers();
     }
     private void showPlayer(HttpServletRequest request, HttpServletResponse response) {
 
