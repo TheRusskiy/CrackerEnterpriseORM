@@ -10,13 +10,18 @@ import entities.Player;
  */
 public class JspUtil {
     public static String clubLink(Club club){
-        String link = "<a ";
-        link+="href='";
-        link+= FootballServlet.Action.SHOW_CLUB.getRequestURI();
-        link+="?id="+club.getId();
-        link+="'>";
-        link+=club.getName();
-        link+="</a>";
+        String link = "";
+        if (club==null){
+            link+="Unemployed";
+        } else {
+            link+="<a ";
+            link+="href='";
+            link+= FootballServlet.Action.SHOW_CLUB.getRequestURI();
+            link+="?id="+club.getId();
+            link+="'>";
+            link+=club.getName();
+            link+="</a>";
+        }
         return link;
     }
     public static String detailsLink(Player player){
@@ -40,10 +45,16 @@ public class JspUtil {
         return link;
     }
     public static String clubOption(Club club){
+        String id = "0";
+        String name = "Unemployed";
+        if (club!=null) {
+            id = String.valueOf(club.getId());
+            name = club.getName();
+        }
         String option = "<option ";
-        option+="value='"+club.getId()+"'";
+        option+="value='"+id+"'";
         option+=">";
-        option+=club.getName();
+        option+=name;
         option+="</option>";
         return option;
     }

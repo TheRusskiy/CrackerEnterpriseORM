@@ -60,8 +60,12 @@ public class FootballServlet extends HttpServlet {
                     editPlayerDelete(request, response);
                     break;
                 }
-                case NEW_PLAYER:{
-                    newPlayer(request, response);
+                case NEW_PLAYER_GET:{
+                    newPlayerGet(request, response);
+                    break;
+                }
+                case NEW_PLAYER_POST:{
+                    newPlayerPost(request, response);
                     break;
                 }
                 case ALL_MATCHES:{
@@ -135,7 +139,8 @@ public class FootballServlet extends HttpServlet {
         String position = request.getParameter("position");
         Integer club_id = Integer.valueOf(request.getParameter("club"));
         Player player = dao.getPlayer(id);
-        Club club = dao.getClub(club_id);
+        Club club = null;
+        if (club_id!=0) club = dao.getClub(club_id);
         player.setClub(club);
         player.setName(name);
         player.setPosition(position);
@@ -145,8 +150,20 @@ public class FootballServlet extends HttpServlet {
         Integer id = Integer.valueOf(request.getParameter("id"));
         dao.deletePlayer(id);
     }
-    private void newPlayer(HttpServletRequest request, HttpServletResponse response) {
-
+    private void newPlayerGet(HttpServletRequest request, HttpServletResponse response) {
+        Collection<Club> clubs = dao.getClubs();
+        request.setAttribute("clubs", clubs);
+    }
+    private void newPlayerPost(HttpServletRequest request, HttpServletResponse response) {
+        String name = request.getParameter("name");
+        String position = request.getParameter("position");
+        Integer club_id = Integer.valueOf(request.getParameter("club"));
+        Club club = null;
+        if (club_id!=0) club = dao.getClub(club_id);
+        Player player = dao.createPlayer(name);
+        player.setClub(club);
+        player.setPosition(position);
+        dao.save(player);
     }
     private void allMatches(HttpServletRequest request, HttpServletResponse response) {
 
@@ -197,7 +214,8 @@ public class FootballServlet extends HttpServlet {
         EDIT_PLAYER_GET("/?players/edit/?", "/jsp_players/edit_player.jsp"),
         EDIT_PLAYER_POST("/?players/edit-post/?", SHOW_PLAYER),
         EDIT_PLAYER_DELETE("/?players/edit-delete/?", ALL_PLAYERS),
-        NEW_PLAYER("/?players/new/?", ""),
+        NEW_PLAYER_GET("/?players/new/?", "/jsp_players/new_player.jsp"),
+        NEW_PLAYER_POST("/?players/new-post/?", ALL_PLAYERS),
         ALL_MATCHES("/?matches/?", ""),
         SHOW_MATCH("/?matches/show/?", ""),
         EDIT_MATCH("/?matches/edit/?", ""),
@@ -219,8 +237,7 @@ public class FootballServlet extends HttpServlet {
             this.redirect=true;
         }
         public String getRequestURI(){
-            String result = "/"+requestPattern.replaceAll(Pattern.quote("/?"), "");
-            return result;
+            return "/"+requestPattern.replaceAll(Pattern.quote("/?"), "");
         }
     }
     protected void sendErrorRedirect(HttpServletRequest request, HttpServletResponse response, String errorPageURL, Throwable e) {

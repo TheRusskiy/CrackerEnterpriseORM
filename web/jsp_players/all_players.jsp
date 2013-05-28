@@ -35,6 +35,9 @@
         if (players.size()==0){ out.print("<td>NO PLAYERS FOUND</td>");}
         %>
     </table>
+    <form action="<%=FootballServlet.Action.NEW_PLAYER_GET.getRequestURI()%>" method="get">
+        <input class="btn btn-primary btn-large" type="submit" value="New Player"/>
+    </form>
 </div>
 
 </body>

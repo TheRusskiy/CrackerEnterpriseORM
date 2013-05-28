@@ -30,10 +30,12 @@
             <select id="club" name="club">
                 <%
                     if (p.getClub()!=null) out.print(clubOption(p.getClub()));
+                    else out.print(clubOption(null));
                     for(Club c: availableClubs){
                         if (p.getClub()!=null&& c.getId().equals(p.getClub().getId()))continue;
                         out.print(clubOption(c));
                     }
+                    if (p.getClub()!=null) out.print(clubOption(null));
                 %>
             </select>
         <br>

@@ -1,3 +1,7 @@
+TRUNCATE TABLE clubs; COMMIT;
+TRUNCATE TABLE matches; COMMIT;
+TRUNCATE TABLE players; COMMIT:
+
 INSERT INTO clubs(id, name, stadium)
 VALUES(1, 'Manchester United', 'Old Trafford'); COMMIT;
 INSERT INTO clubs(id, name, stadium)
@@ -60,7 +64,6 @@ VALUES(23, 'Gerrard', 'midfielder', 4); COMMIT;
 INSERT INTO players(id, name, position, club_id)
 VALUES(24, 'Reina', 'goalkeeper', 4); COMMIT;
 
-
 INSERT INTO matches(id, match_date, home_id, guest_id)
 VALUES (1, TO_DATE('2000/01/01', 'yyyy/mm/dd'), 1, 2); COMMIT;
 INSERT INTO matches(id, match_date, home_id, guest_id)
@@ -81,3 +84,30 @@ INSERT INTO matches(id, match_date, home_id, guest_id)
 VALUES (9, TO_DATE('2009/04/25', 'yyyy/mm/dd'), 3, 2); COMMIT;
 INSERT INTO matches(id, match_date, home_id, guest_id)
 VALUES (10, TO_DATE('2013/09/17', 'yyyy/mm/dd'), 2, 1); COMMIT;
+
+DROP SEQUENCE club_sequence;
+CREATE SEQUENCE club_sequence
+INCREMENT BY 1
+START WITH 100
+NOMAXVALUE
+NOCACHE
+NOCYCLE;
+COMMIT;
+
+DROP SEQUENCE player_sequence;
+CREATE SEQUENCE player_sequence
+INCREMENT BY 1
+START WITH 100
+NOMAXVALUE
+NOCACHE
+NOCYCLE;
+COMMIT;
+
+DROP SEQUENCE match_sequence;
+CREATE SEQUENCE match_sequence
+INCREMENT BY 1
+START WITH 100
+NOMAXVALUE
+NOCACHE
+NOCYCLE;
+COMMIT;
