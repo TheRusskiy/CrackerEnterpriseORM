@@ -7,7 +7,10 @@
   Time: 2:34
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% Club c = (Club) request.getAttribute("club");%>
+<%
+    Club c = (Club) request.getAttribute("club");
+    String xml = (String) request.getAttribute("xml");
+%>
 <html>
 <jsp:include page="/_head.jsp"/>
 <body>
@@ -34,6 +37,12 @@
         <input type="hidden" name="id" value="<%=c.getId()%>"/>
         <input class="btn btn-danger" type="submit" value="Delete" name="delete" data-confirm="Sure?">
     </form>
+</div>
+<div class="data_xml">
+    <label>
+        XML Representation
+        <textarea rows="7"><%=xml%></textarea>
+    </label>
 </div>
 
 </body>

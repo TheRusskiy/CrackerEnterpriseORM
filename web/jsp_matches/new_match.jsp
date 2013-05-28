@@ -52,6 +52,16 @@
         <input class="btn btn-danger" type="submit" value="Cancel" name="cancel" data-confirm="Sure?">
     </form>
 </div>
+
+<div class="data_xml">
+    <form action="<%=FootballServlet.Action.NEW_MATCH_XML.getRequestURI()%>" method="post">
+        <label>
+            XML Representation
+            <textarea name="xml" rows="7"></textarea>
+        </label>
+        <input class="btn btn-success" type="submit" value="Create" name="create">
+    </form>
+</div>
 </body>
 </html>
 <jsp:include page="/_footer.jsp"/>

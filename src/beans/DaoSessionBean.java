@@ -135,6 +135,7 @@ public class DaoSessionBean implements Dao{
     @Override
     public String marshal(Object object){
         try {
+            storeEntity(object);
             JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             // output pretty printed
@@ -148,6 +149,7 @@ public class DaoSessionBean implements Dao{
     }
     public void marshal(Object object, OutputStream out){
         try {
+            storeEntity(object);
             JAXBContext jaxbContext = JAXBContext.newInstance(object.getClass());
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
             // output pretty printed
@@ -199,6 +201,28 @@ public class DaoSessionBean implements Dao{
             return;
         }
         em.persist(obj);
+        em.flush();
+    }
+
+    private void storeEntity(Object obj) {
+        if (obj.getClass()==Player.class){
+            Player p = (Player) obj;
+            p.setClub(p.getClub());
+        } else if (obj.getClass()==Match.class){
+            Match p = (Match) obj;
+            p.setGuest(p.getGuest());
+            p.setHome(p.getHome());
+        }  else if (obj.getClass()==Club.class){
+            Club c = (Club) obj;
+            //array to avoid concurrent modification exception:
+            Player[] players = c.getPlayers().toArray(new Player[]{});
+            for (Player player : players) {
+                c.addPlayer(player);
+            }
+        } else {
+            return;
+        }
+        em.merge(obj);
         em.flush();
     }
 

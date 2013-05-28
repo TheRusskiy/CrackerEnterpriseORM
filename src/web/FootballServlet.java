@@ -52,6 +52,7 @@ public class FootballServlet extends HttpServlet {
                 case EDIT_PLAYER_DELETE:{ editPlayerDelete(request, response); break;}
                 case NEW_PLAYER_GET:{ newPlayerGet(request, response); break;}
                 case NEW_PLAYER_POST:{ newPlayerPost(request, response); break;}
+                case NEW_PLAYER_XML:{ newPlayerXml(request, response); break;}
                 case ALL_MATCHES:{ allMatches(request, response); break;}
                 case SHOW_MATCH:{ showMatch(request, response); break;}
                 case EDIT_MATCH_GET:{ editMatchGet(request, response); break;}
@@ -59,6 +60,7 @@ public class FootballServlet extends HttpServlet {
                 case EDIT_MATCH_DELETE:{ editMatchDelete(request, response); break;}
                 case NEW_MATCH_GET:{ newMatchGet(request, response); break;}
                 case NEW_MATCH_POST:{ newMatchPost(request, response); break;}
+                case NEW_MATCH_XML:{ newMatchXml(request, response); break;}
                 case ALL_CLUBS:{ allClubs(request, response); break;}
                 case SHOW_CLUB:{ showClub(request, response); break;}
                 case EDIT_CLUB_GET:{ editClubGet(request, response); break;}
@@ -66,6 +68,7 @@ public class FootballServlet extends HttpServlet {
                 case EDIT_CLUB_DELETE:{ editClubDelete(request, response); break;}
                 case NEW_CLUB_GET:{ newClubGet(request, response); break; }
                 case NEW_CLUB_POST:{ newClubPost(request, response); break; }
+                case NEW_CLUB_XML:{ newClubXml(request, response); break; }
                 default:{ throw new RuntimeException("WTF?");}
             }
             if (action.redirect){
@@ -90,6 +93,8 @@ public class FootballServlet extends HttpServlet {
         Integer id = Integer.valueOf(request.getParameter("id"));
         Player player = dao.getPlayer(id);
         request.setAttribute("player", player);
+        String xml = dao.marshal(player);
+        request.setAttribute("xml", xml);
     }
     private void editPlayerGet(HttpServletRequest request, HttpServletResponse response) {
         Integer id = Integer.valueOf(request.getParameter("id"));
@@ -97,6 +102,8 @@ public class FootballServlet extends HttpServlet {
         request.setAttribute("player", player);
         Collection<Club> clubs = dao.getClubs();
         request.setAttribute("clubs", clubs);
+        String xml = dao.marshal(player);
+        request.setAttribute("xml", xml);
     }
     private void editPlayerPost(HttpServletRequest request, HttpServletResponse response) {
         Integer id = Integer.valueOf(request.getParameter("id"));
@@ -111,6 +118,7 @@ public class FootballServlet extends HttpServlet {
         player.setPosition(position);
         dao.save(player);
     }
+
     private void editPlayerDelete(HttpServletRequest request, HttpServletResponse response) {
         Integer id = Integer.valueOf(request.getParameter("id"));
         dao.deletePlayer(id);
@@ -130,6 +138,10 @@ public class FootballServlet extends HttpServlet {
         player.setPosition(position);
         dao.save(player);
     }
+    private void newPlayerXml(HttpServletRequest request, HttpServletResponse response) {
+        String xml = request.getParameter("xml");
+        dao.unmarshal(xml, Player.class);
+    }
     private void allMatches(HttpServletRequest request, HttpServletResponse response) {
         Collection<Match> matches = dao.getMatches();
         request.setAttribute("matches", matches);
@@ -138,6 +150,8 @@ public class FootballServlet extends HttpServlet {
         Integer id = Integer.valueOf(request.getParameter("id"));
         Match match = dao.getMatch(id);
         request.setAttribute("match", match);
+        String xml = dao.marshal(match);
+        request.setAttribute("xml", xml);
     }
     private void editMatchGet(HttpServletRequest request, HttpServletResponse response) {
         Integer id = Integer.valueOf(request.getParameter("id"));
@@ -177,6 +191,10 @@ public class FootballServlet extends HttpServlet {
         Date date = formatDate(date_string);
         Match match = dao.createMatch(home, guest, date);
     }
+    private void newMatchXml(HttpServletRequest request, HttpServletResponse response) {
+        String xml = request.getParameter("xml");
+        dao.unmarshal(xml, Match.class);
+    }
     private void allClubs(HttpServletRequest request, HttpServletResponse response) {
         Collection<Club> clubs = dao.getClubs();
         request.setAttribute("clubs", clubs);
@@ -185,6 +203,8 @@ public class FootballServlet extends HttpServlet {
         Integer id = Integer.valueOf(request.getParameter("id"));
         Club club = dao.getClub(id);
         request.setAttribute("club", club);
+        String xml = dao.marshal(club);
+        request.setAttribute("xml", xml);
     }
     private void editClubGet(HttpServletRequest request, HttpServletResponse response) {
         Integer id = Integer.valueOf(request.getParameter("id"));
@@ -212,6 +232,10 @@ public class FootballServlet extends HttpServlet {
         Club club = dao.createClub(name);
         club.setStadium(stadium);
         dao.save(club);
+    }
+    private void newClubXml(HttpServletRequest request, HttpServletResponse response) {
+        String xml = request.getParameter("xml");
+        dao.unmarshal(xml, Club.class);
     }
 
 
@@ -241,6 +265,7 @@ public class FootballServlet extends HttpServlet {
         EDIT_PLAYER_DELETE("/?players/edit-delete/?", ALL_PLAYERS),
         NEW_PLAYER_GET("/?players/new/?", "/jsp_players/new_player.jsp"),
         NEW_PLAYER_POST("/?players/new-post/?", ALL_PLAYERS),
+        NEW_PLAYER_XML("/?players/new-xml/?", ALL_PLAYERS),
         ALL_MATCHES("/?matches/?", "/jsp_matches/all_matches.jsp"),
         SHOW_MATCH("/?matches/show/?", "/jsp_matches/show_match.jsp"),
         EDIT_MATCH_GET("/?matches/edit/?", "/jsp_matches/edit_match.jsp"),
@@ -248,13 +273,15 @@ public class FootballServlet extends HttpServlet {
         EDIT_MATCH_DELETE("/?matches/edit-delete/?", ALL_MATCHES),
         NEW_MATCH_GET("/?matches/new/?", "/jsp_matches/new_match.jsp"),
         NEW_MATCH_POST("/?matches/new-post/?", ALL_MATCHES),
+        NEW_MATCH_XML("/?matches/new-xml/?", ALL_MATCHES),
         ALL_CLUBS("/?clubs/?", "/jsp_clubs/all_clubs.jsp"),
         SHOW_CLUB("/?clubs/show/?", "/jsp_clubs/show_club.jsp"),
         EDIT_CLUB_GET("/?clubs/edit/?", "/jsp_clubs/edit_club.jsp"),
         EDIT_CLUB_POST("/?clubs/edit-post/?", SHOW_CLUB),
         EDIT_CLUB_DELETE("/?clubs/edit-delete/?", ALL_CLUBS),
         NEW_CLUB_GET("/?clubs/new/?", "/jsp_clubs/new_club.jsp"),
-        NEW_CLUB_POST("/?clubs/new-post/?", ALL_CLUBS);
+        NEW_CLUB_POST("/?clubs/new-post/?", ALL_CLUBS),
+        NEW_CLUB_XML("/?clubs/new-xml/?", ALL_CLUBS);
         public String requestPattern;
         public String responseURI;
         public boolean redirect = false;

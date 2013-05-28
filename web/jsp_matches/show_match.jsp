@@ -8,7 +8,10 @@
   Time: 2:34
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% Match m = (Match) request.getAttribute("match");%>
+<%
+    Match m = (Match) request.getAttribute("match");
+    String xml = (String) request.getAttribute("xml");
+%>
 <html>
 <jsp:include page="/_head.jsp"/>
 <body>
@@ -37,6 +40,12 @@
         <input type="hidden" name="id" value="<%=m.getId()%>"/>
         <input class="btn btn-danger" type="submit" value="Delete" name="delete" data-confirm="Sure?">
     </form>
+</div>
+<div class="data_xml">
+    <label>
+        XML Representation
+        <textarea rows="7"><%=xml%></textarea>
+    </label>
 </div>
 
 </body>
