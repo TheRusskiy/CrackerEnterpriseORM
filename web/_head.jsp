@@ -17,4 +17,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/bootstrap.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/jquery-ui-1.10.3.custom.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/main.css">
+    <script src="${pageContext.request.contextPath}/js/jquery-1.9.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/js/jquery-ui-1.10.3.custom.min.js"></script>
 </head>

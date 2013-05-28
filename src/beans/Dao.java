@@ -5,8 +5,8 @@ import entities.Match;
 import entities.Player;
 
 import javax.ejb.Remote;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Author: TheRusskiy

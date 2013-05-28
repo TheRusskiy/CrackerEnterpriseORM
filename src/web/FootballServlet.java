@@ -2,6 +2,7 @@ package web;
 
 import beans.Dao;
 import entities.Club;
+import entities.Match;
 import entities.Player;
 
 import javax.ejb.EJB;
@@ -17,8 +18,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
+
+import static web.JspUtil.formatDate;
 
 /**
  * Author: TheRusskiy
@@ -125,25 +129,51 @@ public class FootballServlet extends HttpServlet {
         dao.save(player);
     }
     private void allMatches(HttpServletRequest request, HttpServletResponse response) {
-
+        Collection<Match> matches = dao.getMatches();
+        request.setAttribute("matches", matches);
     }
     private void showMatch(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Match match = dao.getMatch(id);
+        request.setAttribute("match", match);
     }
     private void editMatchGet(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Match match = dao.getMatch(id);
+        request.setAttribute("match", match);
+        Collection<Club> clubs = dao.getClubs();
+        request.setAttribute("clubs", clubs);
     }
     private void editMatchPost(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        String date_string = request.getParameter("date");
+        Integer home_id = Integer.valueOf(request.getParameter("home"));
+        Integer guest_id = Integer.valueOf(request.getParameter("guest"));
+        Match match = dao.getMatch(id);
+        Club home = dao.getClub(home_id);
+        Club guest = dao.getClub(guest_id);
+        match.setHome(home);
+        match.setGuest(guest);
+        Date date = formatDate(date_string);
+        match.setDate(date);
+        dao.save(match);
     }
     private void editMatchDelete(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        dao.deleteMatch(id);
     }
     private void newMatchGet(HttpServletRequest request, HttpServletResponse response) {
-
+        Collection<Club> clubs = dao.getClubs();
+        request.setAttribute("clubs", clubs);
     }
     private void newMatchPost(HttpServletRequest request, HttpServletResponse response) {
-
+        String date_string = request.getParameter("date");
+        Integer home_id = Integer.valueOf(request.getParameter("home"));
+        Integer guest_id = Integer.valueOf(request.getParameter("guest"));
+        Club home = dao.getClub(home_id);
+        Club guest = dao.getClub(guest_id);
+        Date date = formatDate(date_string);
+        Match match = dao.createMatch(home, guest, date);
     }
     private void allClubs(HttpServletRequest request, HttpServletResponse response) {
         Collection<Club> clubs = dao.getClubs();
@@ -210,7 +240,7 @@ public class FootballServlet extends HttpServlet {
         NEW_PLAYER_POST("/?players/new-post/?", ALL_PLAYERS),
         ALL_MATCHES("/?matches/?", "/jsp_matches/all_matches.jsp"),
         SHOW_MATCH("/?matches/show/?", "/jsp_matches/show_match.jsp"),
-        EDIT_MATCH_GET("/?matches/edit/?", "/jsp_matches/edit_matches.jsp"),
+        EDIT_MATCH_GET("/?matches/edit/?", "/jsp_matches/edit_match.jsp"),
         EDIT_MATCH_POST("/?matches/edit-post/?", SHOW_MATCH),
         EDIT_MATCH_DELETE("/?matches/edit-delete/?", ALL_MATCHES),
         NEW_MATCH_GET("/?matches/new/?", "/jsp_matches/new_match.jsp"),

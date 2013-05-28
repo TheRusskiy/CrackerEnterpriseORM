@@ -11,8 +11,6 @@
   Time: 2:50
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<script src="${pageContext.request.contextPath}/js/jquery-1.9.1.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/jsuri-1.1.1.min.js"></script>
 <script src="${pageContext.request.contextPath}/js/gen_validatorv4.js"></script>
 <script src="${pageContext.request.contextPath}/js/bootstrap.min.js"></script>

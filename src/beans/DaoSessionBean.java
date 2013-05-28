@@ -16,8 +16,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.sql.Date;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -122,12 +122,14 @@ public class DaoSessionBean implements Dao{
 
     @Override
     public void save(Match match) {
-        em.persist(match);
+        em.merge(match);
+        em.flush();
     }
 
     @Override
     public void save(Club club) {
         em.merge(club);
+        em.flush();
     }
 
     @Override
