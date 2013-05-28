@@ -10,6 +10,10 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>FootballServlet</servlet-name>
+        <url-pattern>/index</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FootballServlet</servlet-name>
         <url-pattern>/players</url-pattern>
     </servlet-mapping>
     <servlet-mapping>

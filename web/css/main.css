@@ -1,6 +1,23 @@
 div.data_list {
     width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 div.data_show {
     width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+div.data_edit{
+    width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.center {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+div#home{
+    width: 400px;
 }

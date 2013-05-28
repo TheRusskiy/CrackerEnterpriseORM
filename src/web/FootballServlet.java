@@ -44,6 +44,7 @@ public class FootballServlet extends HttpServlet {
             loadResources();
             Action action = getAction(request);
             switch (action) {
+                case HOME:{ doHome(request, response); break;}
                 case ALL_PLAYERS:{ allPlayers(request, response); break;}
                 case SHOW_PLAYER:{ showPlayer(request, response); break;}
                 case EDIT_PLAYER_GET:{ editPlayerGet(request, response); break;}
@@ -75,11 +76,12 @@ public class FootballServlet extends HttpServlet {
                 dispatcher.forward(request, response);
             }
         } catch (Throwable e) {
-
+            e.printStackTrace();
             sendErrorRedirect(request, response, errorPageURL, e);
         }
     }
-
+    private void doHome(HttpServletRequest request, HttpServletResponse response) {
+    }
     private void allPlayers(HttpServletRequest request, HttpServletResponse response) {
         Collection<Player> players = dao.getPlayers();
         request.setAttribute("players", players);
@@ -231,6 +233,7 @@ public class FootballServlet extends HttpServlet {
         }
     }
     public enum Action {
+        HOME("/?index/?", "/home/index.jsp"),
         ALL_PLAYERS("/?players/?", "/jsp_players/all_players.jsp"),
         SHOW_PLAYER("/?players/show/?", "/jsp_players/show_player.jsp"),
         EDIT_PLAYER_GET("/?players/edit/?", "/jsp_players/edit_player.jsp"),
