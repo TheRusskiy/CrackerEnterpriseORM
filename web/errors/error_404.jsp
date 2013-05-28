@@ -12,8 +12,9 @@
 --%>
 <%@ page isErrorPage="true" contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<jsp:include page="/_header.jsp"></jsp:include>
+<jsp:include page="/_head.jsp"></jsp:include>
 <body>
+<jsp:include page="/_top_menu.jsp"/>
 <h1>404</h1>
 <h1>This is not the web page you are looking for.</h1>
 <img src="/img/this_are_not.jpg">

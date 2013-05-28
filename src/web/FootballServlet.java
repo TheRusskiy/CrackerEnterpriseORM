@@ -1,6 +1,8 @@
 package web;
 
 import beans.Dao;
+import entities.Club;
+import entities.Player;
 
 import javax.ejb.EJB;
 import javax.naming.InitialContext;
@@ -12,6 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.regex.Pattern;
 
 /**
  * Author: TheRusskiy
@@ -41,8 +48,16 @@ public class FootballServlet extends HttpServlet {
                     showPlayer(request, response);
                     break;
                 }
-                case EDIT_PLAYER:{
-                    editPlayer(request, response);
+                case EDIT_PLAYER_GET:{
+                    editPlayerGet(request, response);
+                    break;
+                }
+                case EDIT_PLAYER_POST:{
+                    editPlayerPost(request, response);
+                    break;
+                }
+                case EDIT_PLAYER_DELETE:{
+                    editPlayerDelete(request, response);
                     break;
                 }
                 case NEW_PLAYER:{
@@ -85,28 +100,50 @@ public class FootballServlet extends HttpServlet {
                     throw new RuntimeException("WTF?");
                 }
             }
-            RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(action.responseURI);
-            dispatcher.forward(request, response);
-//        Player player = dao.createPlayer("DIMA");
-//        Club club = dao.createClub("MU");
-//        club.addPlayer(player);
-//        dao.save(club);
-//        player = dao.getPlayer(player.getId());
-//        ServletOutputStream out = response.getOutputStream();
-//        out.print(player.getId()+":"+player.getName()+", club: "+player.getClub().getName());
+            if (action.redirect){
+                String url = encodeParamsInURL(request, action.responseURI);
+                response.sendRedirect(url);
+            } else{
+                RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(action.responseURI);
+                dispatcher.forward(request, response);
+            }
         } catch (Throwable e) {
+
             sendErrorRedirect(request, response, errorPageURL, e);
         }
     }
 
     private void allPlayers(HttpServletRequest request, HttpServletResponse response) {
-        dao.getPlayers();
+        Collection<Player> players = dao.getPlayers();
+        request.setAttribute("players", players);
     }
     private void showPlayer(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Player player = dao.getPlayer(id);
+        request.setAttribute("player", player);
     }
-    private void editPlayer(HttpServletRequest request, HttpServletResponse response) {
-
+    private void editPlayerGet(HttpServletRequest request, HttpServletResponse response) {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Player player = dao.getPlayer(id);
+        request.setAttribute("player", player);
+        Collection<Club> clubs = dao.getClubs();
+        request.setAttribute("clubs", clubs);
+    }
+    private void editPlayerPost(HttpServletRequest request, HttpServletResponse response) {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String position = request.getParameter("position");
+        Integer club_id = Integer.valueOf(request.getParameter("club"));
+        Player player = dao.getPlayer(id);
+        Club club = dao.getClub(club_id);
+        player.setClub(club);
+        player.setName(name);
+        player.setPosition(position);
+        dao.save(player);
+    }
+    private void editPlayerDelete(HttpServletRequest request, HttpServletResponse response) {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        dao.deletePlayer(id);
     }
     private void newPlayer(HttpServletRequest request, HttpServletResponse response) {
 
@@ -140,7 +177,7 @@ public class FootballServlet extends HttpServlet {
     private Action getAction(HttpServletRequest request) {
         String path = request.getRequestURI().toLowerCase();
         for(Action action:Action.values()){
-            if (path.matches(action.requestURI)) return action;
+            if (path.matches(action.requestPattern)) return action;
         }
         throw new RuntimeException("Unknown route: "+request.getServletPath());
     }
@@ -154,24 +191,36 @@ public class FootballServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
     }
-    enum Action {
-        ALL_PLAYERS("/?players/?$", "/index.jsp"),
-        SHOW_PLAYER("/?players/show/?$", ""),
-        EDIT_PLAYER("/?players/edit/?$", ""),
-        NEW_PLAYER("/?players/new/?$", ""),
-        ALL_MATCHES("/?matches/?$", ""),
-        SHOW_MATCH("/?matches/show/?$", ""),
-        EDIT_MATCH("/?matches/edit/?$", ""),
-        NEW_MATCH("/?matches/new/?$", ""),
-        ALL_CLUBS("/?clubs/?$", ""),
-        SHOW_CLUB("/?clubs/show/?$", ""),
-        EDIT_CLUB("/?clubs/edit/?$", ""),
-        NEW_CLUB("/?clubs/new/?$", "");
-        final public String requestURI;
-        final public String responseURI;
-        Action(String requestURI, String responseURI){
-            this.requestURI = requestURI;
+    public enum Action {
+        ALL_PLAYERS("/?players/?", "/jsp_players/all_players.jsp"),
+        SHOW_PLAYER("/?players/show/?", "/jsp_players/show_player.jsp"),
+        EDIT_PLAYER_GET("/?players/edit/?", "/jsp_players/edit_player.jsp"),
+        EDIT_PLAYER_POST("/?players/edit-post/?", SHOW_PLAYER),
+        EDIT_PLAYER_DELETE("/?players/edit-delete/?", ALL_PLAYERS),
+        NEW_PLAYER("/?players/new/?", ""),
+        ALL_MATCHES("/?matches/?", ""),
+        SHOW_MATCH("/?matches/show/?", ""),
+        EDIT_MATCH("/?matches/edit/?", ""),
+        NEW_MATCH("/?matches/new/?", ""),
+        ALL_CLUBS("/?clubs/?", ""),
+        SHOW_CLUB("/?clubs/show/?", ""),
+        EDIT_CLUB("/?clubs/edit/?", ""),
+        NEW_CLUB("/?clubs/new/?", "");
+        public String requestPattern;
+        public String responseURI;
+        public boolean redirect = false;
+        Action(String requestPattern, String responseURI){
+            this.requestPattern = requestPattern;
             this.responseURI = responseURI;
+        }
+        Action(String requestPattern, Action redirect){
+            this.requestPattern = requestPattern;
+            this.responseURI = redirect.getRequestURI();
+            this.redirect=true;
+        }
+        public String getRequestURI(){
+            String result = "/"+requestPattern.replaceAll(Pattern.quote("/?"), "");
+            return result;
         }
     }
     protected void sendErrorRedirect(HttpServletRequest request, HttpServletResponse response, String errorPageURL, Throwable e) {
@@ -181,5 +230,19 @@ public class FootballServlet extends HttpServlet {
         } catch (Exception exceptional_exception) {
             throw new RuntimeException(exceptional_exception);
         }
+    }
+
+    private String encodeParamsInURL(HttpServletRequest request, String url) throws UnsupportedEncodingException {
+        Enumeration<String> params = request.getParameterNames();
+        if (params.hasMoreElements()) url += "?";
+        while(params.hasMoreElements()){
+            String name = params.nextElement();
+            String value = request.getParameter(name);
+            url+= URLEncoder.encode(name, "UTF-8");
+            url+="=";
+            url+= URLEncoder.encode(value, "UTF-8");
+            url+="&";
+        }
+        return url;
     }
 }

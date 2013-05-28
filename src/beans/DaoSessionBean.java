@@ -39,8 +39,7 @@ public class DaoSessionBean implements Dao{
     public Collection<Player> getPlayers() {
         Query query = em.createQuery("select p from Player p");
         List list = query.getResultList();
-        int i=0;
-        return null;
+        return list;
     }
 
 
@@ -53,13 +52,30 @@ public class DaoSessionBean implements Dao{
     }
 
     @Override
+    public void deletePlayer(Integer id) {
+        em.remove(getPlayer(id));
+    }
+
+    @Override
+    public void deleteMatch(Integer id) {
+        em.remove(getMatch(id));
+    }
+
+    @Override
+    public void deleteClub(Integer id) {
+        em.remove(getClub(id));
+    }
+
+    @Override
     public Match getMatch(Integer id) {
         return em.find(Match.class, id);
     }
 
     @Override
     public Collection<Match> getMatches() {
-        return null;
+        Query query = em.createQuery("select p from Match p");
+        List list = query.getResultList();
+        return list;
     }
 
     @Override
@@ -85,7 +101,9 @@ public class DaoSessionBean implements Dao{
 
     @Override
     public Collection<Club> getClubs() {
-        return null;
+        Query query = em.createQuery("select p from Club p");
+        List list = query.getResultList();
+        return list;
     }
 
     @Override

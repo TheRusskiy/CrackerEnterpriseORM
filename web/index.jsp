@@ -9,6 +9,7 @@
     <title></title>
   </head>
   <body>
+  <jsp:include page="/_top_menu.jsp"/>
 
   </body>
 </html>
