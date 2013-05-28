@@ -1,4 +1,4 @@
-<%@ page import="entities.Player" %>
+<%@ page import="entities.Club" %>
 <%@ page import="web.FootballServlet" %>
 <%@ page import="static web.JspUtil.*" %>
 <%--
@@ -7,7 +7,7 @@
   Time: 2:34
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% Player p = (Player) request.getAttribute("player");%>
+<% Club c = (Club) request.getAttribute("club");%>
 <html>
 <jsp:include page="/_head.jsp"/>
 <body>
@@ -17,23 +17,21 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Position</th>
-            <th>Club</th>
+            <th>Stadium</th>
         </tr>
         <%  out.print("<tr>");
-            out.print("<td>"+p.getId()+"</td>");
-            out.print("<td>"+p.getName()+"</td>");
-            out.print("<td>"+p.getPosition()+"</td>");
-            out.print("<td>"+clubLink(p.getClub())+"</td>");
+            out.print("<td>"+ c.getId()+"</td>");
+            out.print("<td>"+ c.getName()+"</td>");
+            out.print("<td>"+ c.getStadium()+"</td>");
             out.print("</tr>");
         %>
     </table>
-    <form action="<%=FootballServlet.Action.EDIT_PLAYER_GET.getRequestURI()%>" method="get">
-        <input type="hidden" name="id" value="<%=p.getId()%>"/>
+    <form action="<%=FootballServlet.Action.EDIT_CLUB_GET.getRequestURI()%>" method="get">
+        <input type="hidden" name="id" value="<%=c.getId()%>"/>
         <input class="btn btn-primary" type="submit" value="Edit" name="edit">
     </form>
-    <form action="<%=FootballServlet.Action.EDIT_PLAYER_DELETE.getRequestURI()%>" method="get">
-        <input type="hidden" name="id" value="<%=p.getId()%>"/>
+    <form action="<%=FootballServlet.Action.EDIT_CLUB_DELETE.getRequestURI()%>" method="get">
+        <input type="hidden" name="id" value="<%=c.getId()%>"/>
         <input class="btn btn-danger" type="submit" value="Delete" name="delete" data-confirm="Sure?">
     </form>
 </div>

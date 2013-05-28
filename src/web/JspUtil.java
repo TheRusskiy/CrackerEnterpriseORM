@@ -34,11 +34,31 @@ public class JspUtil {
         link+="</a>";
         return link;
     }
+    public static String detailsLink(Club player){
+        String link = "<a ";
+        link+="href='";
+        link+= FootballServlet.Action.SHOW_CLUB.getRequestURI();
+        link+="?id="+player.getId();
+        link+="'>";
+        link+="Details";
+        link+="</a>";
+        return link;
+    }
     public static String editLink(Player player){
         String link = "<a ";
         link+="href='";
         link+= FootballServlet.Action.EDIT_PLAYER_GET.getRequestURI();
         link+="?id="+player.getId();
+        link+="'>";
+        link+="Edit";
+        link+="</a>";
+        return link;
+    }
+    public static String editLink(Club club){
+        String link = "<a ";
+        link+="href='";
+        link+= FootballServlet.Action.EDIT_CLUB_GET.getRequestURI();
+        link+="?id="+club.getId();
         link+="'>";
         link+="Edit";
         link+="</a>";

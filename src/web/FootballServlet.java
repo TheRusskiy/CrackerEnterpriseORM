@@ -40,69 +40,28 @@ public class FootballServlet extends HttpServlet {
             loadResources();
             Action action = getAction(request);
             switch (action) {
-                case ALL_PLAYERS:{
-                    allPlayers(request, response);
-                    break;
-                }
-                case SHOW_PLAYER:{
-                    showPlayer(request, response);
-                    break;
-                }
-                case EDIT_PLAYER_GET:{
-                    editPlayerGet(request, response);
-                    break;
-                }
-                case EDIT_PLAYER_POST:{
-                    editPlayerPost(request, response);
-                    break;
-                }
-                case EDIT_PLAYER_DELETE:{
-                    editPlayerDelete(request, response);
-                    break;
-                }
-                case NEW_PLAYER_GET:{
-                    newPlayerGet(request, response);
-                    break;
-                }
-                case NEW_PLAYER_POST:{
-                    newPlayerPost(request, response);
-                    break;
-                }
-                case ALL_MATCHES:{
-                    allMatches(request, response);
-                    break;
-                }
-                case SHOW_MATCH:{
-                    showMatch(request, response);
-                    break;
-                }
-                case EDIT_MATCH:{
-                    editMatch(request, response);
-                    break;
-                }
-                case NEW_MATCH:{
-                    newMatch(request, response);
-                    break;
-                }
-                case ALL_CLUBS:{
-                    allClubs(request, response);
-                    break;
-                }
-                case SHOW_CLUB:{
-                    showClub(request, response);
-                    break;
-                }
-                case EDIT_CLUB:{
-                    editClub(request, response);
-                    break;
-                }
-                case NEW_CLUB:{
-                    newClub(request, response);
-                    break;
-                }
-                default:{
-                    throw new RuntimeException("WTF?");
-                }
+                case ALL_PLAYERS:{ allPlayers(request, response); break;}
+                case SHOW_PLAYER:{ showPlayer(request, response); break;}
+                case EDIT_PLAYER_GET:{ editPlayerGet(request, response); break;}
+                case EDIT_PLAYER_POST:{ editPlayerPost(request, response); break;}
+                case EDIT_PLAYER_DELETE:{ editPlayerDelete(request, response); break;}
+                case NEW_PLAYER_GET:{ newPlayerGet(request, response); break;}
+                case NEW_PLAYER_POST:{ newPlayerPost(request, response); break;}
+                case ALL_MATCHES:{ allMatches(request, response); break;}
+                case SHOW_MATCH:{ showMatch(request, response); break;}
+                case EDIT_MATCH_GET:{ editMatchGet(request, response); break;}
+                case EDIT_MATCH_POST:{ editMatchPost(request, response); break;}
+                case EDIT_MATCH_DELETE:{ editMatchDelete(request, response); break;}
+                case NEW_MATCH_GET:{ newMatchGet(request, response); break;}
+                case NEW_MATCH_POST:{ newMatchPost(request, response); break;}
+                case ALL_CLUBS:{ allClubs(request, response); break;}
+                case SHOW_CLUB:{ showClub(request, response); break;}
+                case EDIT_CLUB_GET:{ editClubGet(request, response); break;}
+                case EDIT_CLUB_POST:{ editClubPost(request, response); break;}
+                case EDIT_CLUB_DELETE:{ editClubDelete(request, response); break;}
+                case NEW_CLUB_GET:{ newClubGet(request, response); break; }
+                case NEW_CLUB_POST:{ newClubPost(request, response); break; }
+                default:{ throw new RuntimeException("WTF?");}
             }
             if (action.redirect){
                 String url = encodeParamsInURL(request, action.responseURI);
@@ -171,23 +130,56 @@ public class FootballServlet extends HttpServlet {
     private void showMatch(HttpServletRequest request, HttpServletResponse response) {
 
     }
-    private void editMatch(HttpServletRequest request, HttpServletResponse response) {
+    private void editMatchGet(HttpServletRequest request, HttpServletResponse response) {
 
     }
-    private void newMatch(HttpServletRequest request, HttpServletResponse response) {
+    private void editMatchPost(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void editMatchDelete(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void newMatchGet(HttpServletRequest request, HttpServletResponse response) {
+
+    }
+    private void newMatchPost(HttpServletRequest request, HttpServletResponse response) {
 
     }
     private void allClubs(HttpServletRequest request, HttpServletResponse response) {
-
+        Collection<Club> clubs = dao.getClubs();
+        request.setAttribute("clubs", clubs);
     }
     private void showClub(HttpServletRequest request, HttpServletResponse response) {
-
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Club club = dao.getClub(id);
+        request.setAttribute("club", club);
     }
-    private void editClub(HttpServletRequest request, HttpServletResponse response) {
-
+    private void editClubGet(HttpServletRequest request, HttpServletResponse response) {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        Club club = dao.getClub(id);
+        request.setAttribute("club", club);
     }
-    private void newClub(HttpServletRequest request, HttpServletResponse response) {
-
+    private void editClubPost(HttpServletRequest request, HttpServletResponse response) {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        String name = request.getParameter("name");
+        String stadium = request.getParameter("stadium");
+        Club club = dao.getClub(id);
+        club.setName(name);
+        club.setStadium(stadium);
+        dao.save(club);
+    }
+    private void editClubDelete(HttpServletRequest request, HttpServletResponse response) {
+        Integer id = Integer.valueOf(request.getParameter("id"));
+        dao.deleteClub(id);
+    }
+    private void newClubGet(HttpServletRequest request, HttpServletResponse response) {
+    }
+    private void newClubPost(HttpServletRequest request, HttpServletResponse response) {
+        String name = request.getParameter("name");
+        String stadium = request.getParameter("stadium");
+        Club club = dao.createClub(name);
+        club.setStadium(stadium);
+        dao.save(club);
     }
 
 
@@ -216,14 +208,20 @@ public class FootballServlet extends HttpServlet {
         EDIT_PLAYER_DELETE("/?players/edit-delete/?", ALL_PLAYERS),
         NEW_PLAYER_GET("/?players/new/?", "/jsp_players/new_player.jsp"),
         NEW_PLAYER_POST("/?players/new-post/?", ALL_PLAYERS),
-        ALL_MATCHES("/?matches/?", ""),
-        SHOW_MATCH("/?matches/show/?", ""),
-        EDIT_MATCH("/?matches/edit/?", ""),
-        NEW_MATCH("/?matches/new/?", ""),
-        ALL_CLUBS("/?clubs/?", ""),
-        SHOW_CLUB("/?clubs/show/?", ""),
-        EDIT_CLUB("/?clubs/edit/?", ""),
-        NEW_CLUB("/?clubs/new/?", "");
+        ALL_MATCHES("/?matches/?", "/jsp_matches/all_matches.jsp"),
+        SHOW_MATCH("/?matches/show/?", "/jsp_matches/show_match.jsp"),
+        EDIT_MATCH_GET("/?matches/edit/?", "/jsp_matches/edit_matches.jsp"),
+        EDIT_MATCH_POST("/?matches/edit-post/?", SHOW_MATCH),
+        EDIT_MATCH_DELETE("/?matches/edit-delete/?", ALL_MATCHES),
+        NEW_MATCH_GET("/?matches/new/?", "/jsp_matches/new_match.jsp"),
+        NEW_MATCH_POST("/?matches/new-post/?", ALL_MATCHES),
+        ALL_CLUBS("/?clubs/?", "/jsp_clubs/all_clubs.jsp"),
+        SHOW_CLUB("/?clubs/show/?", "/jsp_clubs/show_club.jsp"),
+        EDIT_CLUB_GET("/?clubs/edit/?", "/jsp_clubs/edit_club.jsp"),
+        EDIT_CLUB_POST("/?clubs/edit-post/?", SHOW_CLUB),
+        EDIT_CLUB_DELETE("/?clubs/edit-delete/?", ALL_CLUBS),
+        NEW_CLUB_GET("/?clubs/new/?", "/jsp_clubs/new_club.jsp"),
+        NEW_CLUB_POST("/?clubs/new-post/?", ALL_CLUBS);
         public String requestPattern;
         public String responseURI;
         public boolean redirect = false;
